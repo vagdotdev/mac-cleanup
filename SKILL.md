@@ -5,7 +5,9 @@ description: >
   leftover installers, unused package-manager store objects — never documents,
   photos, projects, VMs, models, or app profiles. Use when the user wants to
   clean up the Mac, free disk space, clear caches, make it smoother or faster,
-  reclaim storage, or runs /mac-cleanup.
+  reclaim storage, audit leftover app credential records, or runs /mac-cleanup.
+  Remove obsolete apps and their credential remnants only when the user
+  explicitly names or approves those apps.
 metadata:
   short-description: Free Mac space without touching real files
 ---
@@ -39,8 +41,9 @@ Prefer the tool’s own cleanup (`brew cleanup`, `npm cache clean`, `uv cache pr
 `pip cache purge`, `pnpm store prune`) over inventing `rm -rf`. If there is no
 tool, only delete a directory you have classified as cache.
 
-Do not `sudo`. Do not empty Trash unless asked. Do not touch `/Applications`
-or system paths. Do not “tidy” files by moving them around.
+Do not `sudo`. Do not empty Trash unless asked. Do not touch `/Applications` on a default cleanup or modify system paths.
+An explicit request to uninstall named obsolete apps is handled by the
+app-remnant workflow below; it does not authorize removing unrelated apps. Do not “tidy” files by moving them around.
 
 ## How to look
 
@@ -55,6 +58,45 @@ Start from free space (`df`) and the largest items under `$HOME` and
 - `~/.colima`, `~/.lmstudio/models`, `~/Documents`, `~/Downloads` — not caches.
 
 Skip a path you cannot classify.
+
+## App and credential remnants
+
+Include a metadata-only check for obsolete app storage in a Mac survey. Check
+user Keychain generic-password service/label metadata for `Safe Storage` records
+and other app-specific credential services, alongside installed application
+bundle IDs, CLI/package inventories and the matching Application Support,
+Preferences, Containers, Group Containers, LaunchAgents and dot-config paths.
+Never dump password/token values or use `security dump-keychain -d` to discover
+remnants. Keep account identifiers out of public reports.
+
+An absent app is a candidate, not proof that its key is unused. A browser,
+editor or Electron app can still need its storage key to decrypt its profile;
+a CLI may be installed without an application bundle. Check exact identities,
+shared components and retained profiles before classifying an item as obsolete.
+Do not treat a credential record as a cache or remove all `Safe Storage` items.
+
+Default cleanup reports these candidates without deleting their profiles,
+settings, credentials or keychains. When the user explicitly names apps to
+remove, that request authorizes cleanup of those apps only:
+
+- Inventory exact bundle IDs, package names, paths, credential services and
+  matching accounts first. Distinguish current apps from historical entries.
+- Quit the named apps normally. Prefer the vendor/package-manager uninstaller;
+  preserve unique work from their profiles and do not remove shared runtimes.
+- Use recoverable Trash or an explicit quarantine for app files and settings.
+  Explain any retained recovery copy. Do not empty Trash by default.
+- Delete only exact app-owned credential items covered by the request, with
+  supported export/backup when recovery matters. Never replace/delete the
+  entire login keychain, numbered Local Items/iCloud folders, passkeys, SSH
+  keys or unrelated app secrets. Keep native authentication controls in place.
+- Verify app/CLI/package and matching credential remnants after removal.
+  Report any protected or ambiguous paths that remain. A failed permission
+  check is not evidence that cleanup succeeded, and deleting a local token
+  does not revoke its remote session.
+
+During migration, explicitly retired apps and services must also be excluded
+from restoration. A recovery archive may retain a disclosed backup; do not
+silently reintroduce that app's profile or key during a general restore.
 
 ## How to act
 

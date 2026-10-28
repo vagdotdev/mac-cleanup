@@ -1,6 +1,6 @@
 # mac-cleanup
 
-Agent skill that frees space on a Mac by clearing regenerable junk only: caches, leftover installers, and unused package-manager store objects. It does not touch documents, photos, projects, VMs, model weights, or app profiles.
+Agent skill that frees space on a Mac by clearing regenerable junk only: caches, leftover installers, and unused package-manager store objects. Default cleanup does not touch documents, photos, projects, VMs, model weights, app profiles, or credentials. It also audits app credential remnants using metadata only. When you explicitly name obsolete apps to remove, it cleans only their verified files and credential items, with recoverable file removal and checks for shared dependencies.
 
 Measure what is large, classify it, then delete only what a toolchain can download again. Prefer each tool's own cleanup (`brew cleanup`, `npm cache clean`, `uv cache prune`) over a blanket `rm`.
 
